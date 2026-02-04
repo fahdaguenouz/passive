@@ -1,0 +1,8 @@
+passive v1.0.0
+Timestamp: 2026-02-04T19:03:20+01:00
+Type: full-name
+Input: Jean Dupont
+
+First name: Jean
+Last name: Dupont
+Source: N/A (not implemented yet)
