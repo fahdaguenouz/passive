@@ -29,3 +29,12 @@ passive/
     passive.example.yml      # optional: API keys, endpoints
   README.md
   go.mod
+
+
+
+
+
+
+to build :
+go build -o passive ./cmd/passive
+to run ./passive
