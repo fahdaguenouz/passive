@@ -20,6 +20,22 @@ func formatForFile(r core.Result) string {
 	b.WriteString(fmt.Sprintf("Timestamp: %s\n", r.Timestamp.Format(time.RFC3339)))
 	b.WriteString(fmt.Sprintf("Type: %s\n", r.Kind))
 	b.WriteString(fmt.Sprintf("Input: %s\n\n", r.Input))
+	if r.Error != "" {
+		b.WriteString(fmt.Sprintf("Error: %s\n", r.Error))
+	}
+	if len(r.Warnings) > 0 {
+		b.WriteString("Warnings:\n")
+		for _, w := range r.Warnings {
+			b.WriteString(fmt.Sprintf("- %s\n", w))
+		}
+	}
+	if len(r.Sources) > 0 {
+		b.WriteString("Sources:\n")
+		for _, s := range r.Sources {
+			b.WriteString(fmt.Sprintf("- %s\n", s))
+		}
+	}
+	b.WriteString("\n")
 
 	switch r.Kind {
 	case core.KindFullName:
@@ -30,9 +46,6 @@ func formatForFile(r core.Result) string {
 		}
 		if r.FullName.Phone != "" {
 			b.WriteString(fmt.Sprintf("Number: %s\n", r.FullName.Phone))
-		}
-		if r.FullName.Source != "" {
-			b.WriteString(fmt.Sprintf("Source: %s\n", r.FullName.Source))
 		}
 
 	case core.KindIP:
@@ -45,10 +58,7 @@ func formatForFile(r core.Result) string {
 		if r.IP.Lat != 0 || r.IP.Lon != 0 {
 			b.WriteString(fmt.Sprintf("Lat/Lon: %.4f / %.4f\n", r.IP.Lat, r.IP.Lon))
 		}
-		if r.IP.Source != "" {
-			b.WriteString(fmt.Sprintf("Source: %s\n", r.IP.Source))
-		}
-
+		
 	case core.KindUsername:
 		for _, n := range r.Username.Networks {
 			val := "no"

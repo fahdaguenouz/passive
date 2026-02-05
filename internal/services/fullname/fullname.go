@@ -20,7 +20,7 @@ func Run(query string) (core.Result, error) {
 	last := parts[1]
 
 	// TODO: implement real sources lookup (file/API) in sources.go
-	addr, phone, source := "", "", "N/A (not implemented yet)"
+	addr, phone, _ := "", "", "N/A (not implemented yet)"
 
 	return core.Result{
 		Kind:      core.KindFullName,
@@ -31,7 +31,6 @@ func Run(query string) (core.Result, error) {
 			LastName:  last,
 			Address:   addr,
 			Phone:     phone,
-			Source:    source,
 		},
 	}, nil
 }

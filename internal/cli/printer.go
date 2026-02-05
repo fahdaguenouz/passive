@@ -9,6 +9,15 @@ import (
 )
 
 func PrintResult(w io.Writer, r core.Result) {
+	if r.Error != "" {
+		fmt.Fprintf(w, "Error: %s\n", r.Error)
+		return
+	}
+
+	for _, warn := range r.Warnings {
+		fmt.Fprintf(w, "Warning: %s\n", warn)
+	}
+
 	switch r.Kind {
 	case core.KindFullName:
 		fmt.Fprintf(w, "First name: %s\n", r.FullName.FirstName)

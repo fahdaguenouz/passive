@@ -111,19 +111,3 @@ func PrintHelp(w io.Writer) {
 	fmt.Fprintln(w, "  -u        Search with username")
 	fmt.Fprintln(w, "  -h, --help  Show help")
 }
-
-func firstNonEmpty(a, b string) string {
-	if strings.TrimSpace(a) != "" {
-		return a
-	}
-	return b
-}
-
-func hasFlag(args []string, name string) bool {
-	for _, a := range args {
-		if a == name {
-			return true
-		}
-	}
-	return false
-}
