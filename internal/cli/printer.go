@@ -37,7 +37,13 @@ func PrintResult(w io.Writer, r core.Result) {
 			if n.Found {
 				val = "yes"
 			}
-			fmt.Fprintf(w, "%s : %s\n", strings.Title(n.Name), val)
+
+			name := n.Name
+			if len(name) > 0 {
+				name = strings.ToUpper(name[:1]) + name[1:]
+			}
+
+			fmt.Fprintf(w, "%s : %s\n", name, val)
 		}
 
 	default:

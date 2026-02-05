@@ -7,15 +7,15 @@ import (
 )
 
 func NextResultFilename(dir string) (string, error) {
-	base := filepath.Join(dir, "result.txt")
-	if _, err := os.Stat(base); os.IsNotExist(err) {
-		return base, nil
-	}
 	if err := ensureDirExists(dir); err != nil {
 		return "", err
 	}
 
-	// result2.txt, result3.txt, ...
+	base := filepath.Join(dir, "result.txt")
+	if _, err := os.Stat(base); os.IsNotExist(err) {
+		return base, nil
+	}
+
 	for i := 2; i < 10000; i++ {
 		name := filepath.Join(dir, fmt.Sprintf("result%d.txt", i))
 		if _, err := os.Stat(name); os.IsNotExist(err) {

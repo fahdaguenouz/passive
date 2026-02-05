@@ -27,3 +27,5 @@ result*.txt
 *.swo
 .DS_Store
 Thumbs.db
+/build
+*.txt
