@@ -104,12 +104,21 @@ func checkProfile(ctx context.Context, client *http.Client, networkName, url, ha
 			}
 			return true, ""
 
-		case "linkedin":
-			// Usually blocked; if we get here, still might be login wall
-			if strings.Contains(html, "sign in") && strings.Contains(html, "linkedin") {
-				return false, "linkedin: login wall (cannot confirm)"
+		case "tiktok":
+			// TikTok often returns 200 even for missing users, so fingerprint.
+			// If it shows login/captcha wall, we can't confirm.
+			if strings.Contains(html, "couldn't find this account") ||
+				strings.Contains(html, "couldn&#39;t find this account") ||
+				strings.Contains(html, "couldn’t find this account") {
+				return false, ""
 			}
-			// If it’s actually public profile page, count as found
+			if strings.Contains(html, "captcha") || strings.Contains(html, "verify to continue") {
+				return false, "tiktok: captcha/verification wall (cannot confirm)"
+			}
+			// Some pages show generic “page not available”
+			if strings.Contains(html, "page isn't available") || strings.Contains(html, "page is not available") {
+				return false, ""
+			}
 			return true, ""
 
 		default:

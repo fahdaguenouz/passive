@@ -5,12 +5,11 @@ type Network struct {
 	URL  func(handle string) string
 }
 
-// Keep it >= 5 networks (as required).
-// Later we'll implement HTTP checks in username.go
+//  networks 
 var DefaultNetworks = []Network{
 	{Name: "facebook", URL: func(h string) string { return "https://www.facebook.com/" + h }},
 	{Name: "twitter", URL: func(h string) string { return "https://x.com/" + h }},
 	{Name: "instagram", URL: func(h string) string { return "https://www.instagram.com/" + h + "/" }},
-	{Name: "linkedin", URL: func(h string) string { return "https://www.linkedin.com/in/" + h }},
+	{Name: "tiktok", URL: func(h string) string { return "https://www.tiktok.com/@" + h }},
 	{Name: "github", URL: func(h string) string { return "https://github.com/" + h }},
 }
