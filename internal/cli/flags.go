@@ -54,7 +54,6 @@ func ParseArgs(args []string) (Options, bool, error) {
 	mode := ModeNone
 	query := ""
 
-	// helper: joins flag value + remaining args (important for full name)
 	joinValueAndRest := func(val string) string {
 		parts := []string{}
 		if strings.TrimSpace(val) != "" {
@@ -66,30 +65,32 @@ func ParseArgs(args []string) (Options, bool, error) {
 		return strings.TrimSpace(strings.Join(parts, " "))
 	}
 
-	if fn != "" {
+	fnProvided := hasAny(args, "-fn", "--fn")
+	ipProvided := hasAny(args, "-ip", "--ip")
+	uProvided := hasAny(args, "-u", "--u")
+
+	if fnProvided {
 		selected++
 		mode = ModeFullName
 		query = joinValueAndRest(fn)
 	}
-	if ip != "" {
+	if ipProvided {
 		selected++
 		mode = ModeIP
 		query = joinValueAndRest(ip)
 	}
-	if u != "" {
+	if uProvided {
 		selected++
 		mode = ModeUsername
 		query = joinValueAndRest(u)
 	}
 
-	// also allow: passive JohnDoe  (no flags) -> show help (for now)
 	if selected == 0 {
 		return Options{}, true, nil
 	}
 	if selected > 1 {
 		return Options{}, false, errors.New("choose only one option: -fn OR -ip OR -u")
 	}
-
 	if strings.TrimSpace(query) == "" {
 		return Options{}, false, fmt.Errorf("missing value for selected option")
 	}
@@ -110,4 +111,15 @@ func PrintHelp(w io.Writer) {
 	fmt.Fprintln(w, "  -ip       Search with ip address")
 	fmt.Fprintln(w, "  -u        Search with username")
 	fmt.Fprintln(w, "  -h, --help  Show help")
+}
+
+func hasAny(args []string, names ...string) bool {
+	for _, a := range args {
+		for _, n := range names {
+			if a == n {
+				return true
+			}
+		}
+	}
+	return false
 }

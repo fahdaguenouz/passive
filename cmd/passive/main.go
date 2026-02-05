@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"time"
 
 	"passive/internal/cli"
 	"passive/internal/core"
@@ -25,53 +24,41 @@ func main() {
 		return
 	}
 
-	start := time.Now()
+	var (
+		res core.Result
+		runErr error
+	)
 
-	var res core.Result
 	switch opts.Mode {
 	case cli.ModeFullName:
-		r, e := fullname.Run(opts.Query)
-		if e != nil {
-			fmt.Fprintln(os.Stderr, "Error:", e)
-			os.Exit(1)
-		}
-		res = r
-
+		res, runErr = fullname.Run(opts.Query)
 	case cli.ModeIP:
-		r, e := ip.Run(opts.Query)
-		if e != nil {
-			fmt.Fprintln(os.Stderr, "Error:", e)
-			os.Exit(1)
-		}
-		res = r
-
+		res, runErr = ip.Run(opts.Query)
 	case cli.ModeUsername:
-		r, e := username.Run(opts.Query)
-		if e != nil {
-			fmt.Fprintln(os.Stderr, "Error:", e)
-			os.Exit(1)
-		}
-		res = r
-
+		res, runErr = username.Run(opts.Query)
 	default:
 		fmt.Fprintln(os.Stderr, "Error: no mode selected (-fn, -ip, -u)")
 		cli.PrintHelp(os.Stdout)
 		os.Exit(2)
 	}
 
+	// Always print (so errors show up)
 	cli.PrintResult(os.Stdout, res)
+
+	// If there was an error, do NOT write to file
+	if runErr != nil {
+		os.Exit(1)
+	}
 
 	filename, err := output.NextResultFilename(".")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}
-
 	if err := output.WriteResult(filename, res); err != nil {
 		fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}
 
 	fmt.Printf("Saved in %s\n", filename)
-	_ = start // keep for future: timings, verbose mode, etc.
 }
