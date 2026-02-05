@@ -105,20 +105,31 @@ func checkProfile(ctx context.Context, client *http.Client, networkName, url, ha
 			return true, ""
 
 		case "tiktok":
-			// TikTok often returns 200 even for missing users, so fingerprint.
-			// If it shows login/captcha wall, we can't confirm.
+			// TikTok: be careful, HTML may contain the word "captcha" in scripts even when no captcha is shown.
+			// We only mark as captcha wall if we see strong markers.
 			if strings.Contains(html, "couldn't find this account") ||
 				strings.Contains(html, "couldn&#39;t find this account") ||
 				strings.Contains(html, "couldn’t find this account") {
 				return false, ""
 			}
-			if strings.Contains(html, "captcha") || strings.Contains(html, "verify to continue") {
-				return false, "tiktok: captcha/verification wall (cannot confirm)"
+
+			// Strong verification/captcha markers (much safer than just "captcha")
+			if strings.Contains(html, "/captcha") ||
+				strings.Contains(html, "recaptcha") ||
+				strings.Contains(html, "hcaptcha") ||
+				strings.Contains(html, "verify to continue") ||
+				strings.Contains(html, "security verification") ||
+				strings.Contains(html, "verify you're a human") ||
+				strings.Contains(html, "verification required") {
+				return false, "tiktok: verification wall (cannot confirm)"
 			}
-			// Some pages show generic “page not available”
+
+			// Generic not available
 			if strings.Contains(html, "page isn't available") || strings.Contains(html, "page is not available") {
 				return false, ""
 			}
+
+			// If we got a normal 200 and no strong "not found" markers, assume found.
 			return true, ""
 
 		default:
